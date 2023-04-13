@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_crudfirebase/addEditProduct.dart';
+import 'package:basic_utils/basic_utils.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,6 +30,10 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
+      routes: {
+        "home": (context) => const HomePage(),
+        "addEditProduct": (context) => const AddEditProduct()
+      },
       home: const HomePage(),
     );
   }
@@ -41,14 +47,21 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final CollectionReference _products =
-      FirebaseFirestore.instance.collection('products');
+  final Query _products =
+      FirebaseFirestore.instance.collection('products').orderBy('name');
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('CRUD Firebase'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            tooltip: 'Add',
+            onPressed: () => Navigator.pushNamed(context, "addEditProduct"),
+          ),
+        ],
       ),
       body: StreamBuilder(
         stream: _products.snapshots(),
@@ -61,13 +74,16 @@ class _HomePageState extends State<HomePage> {
                     streamSnapshot.data!.docs[index];
 
                 return ListTile(
-                  title: Text(documentSnapshot['name']),
+                  title: Text(
+                      StringUtils.capitalize("${documentSnapshot['name']}")),
                   subtitle: Text("\$${documentSnapshot['price'].toString()}"),
                   trailing: Wrap(
                     children: [
                       IconButton(
                         icon: const Icon(Icons.edit),
-                        onPressed: () => {debugPrint('EDITING . . .')},
+                        onPressed: () => Navigator.pushNamed(
+                            context, "addEditProduct",
+                            arguments: {'id': documentSnapshot['id']}),
                       ),
                       IconButton(
                         icon: const Icon(Icons.delete),
