@@ -11,7 +11,7 @@ class AddEditProduct extends StatefulWidget {
 }
 
 class _AddEditProductState extends State<AddEditProduct> {
-  late String id;
+  String? id = "";
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   final TextEditingController _productName = TextEditingController();
@@ -42,7 +42,7 @@ class _AddEditProductState extends State<AddEditProduct> {
         'price': price,
       };
 
-      if (id.isEmpty) {
+      if (id!.isEmpty) {
         await _products.add(data).then((value) => _goBack());
       } else {
         await _products.doc(id).update(data).then((value) => _goBack());
