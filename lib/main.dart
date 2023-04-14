@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -83,7 +85,7 @@ class _HomePageState extends State<HomePage> {
                         icon: const Icon(Icons.edit),
                         onPressed: () => Navigator.pushNamed(
                             context, "addEditProduct",
-                            arguments: {'id': documentSnapshot['id']}),
+                            arguments: {'id': documentSnapshot.id}),
                       ),
                       IconButton(
                         icon: const Icon(Icons.delete),

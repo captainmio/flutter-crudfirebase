@@ -11,7 +11,7 @@ class AddEditProduct extends StatefulWidget {
 }
 
 class _AddEditProductState extends State<AddEditProduct> {
-  int id = 0;
+  late String id;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   final TextEditingController _productName = TextEditingController();
@@ -42,8 +42,13 @@ class _AddEditProductState extends State<AddEditProduct> {
         'price': price,
       };
 
-      await _products.add(data);
-      _goBack();
+      if (id.isEmpty) {
+        print("Adding . . .");
+        await _products.add(data).then((value) => _goBack());
+      } else {
+        print("Updating . . .");
+        await _products.doc(id).update(data).then((value) => _goBack());
+      }
     }
   }
 
@@ -58,6 +63,15 @@ class _AddEditProductState extends State<AddEditProduct> {
       appBarTitle = "Edit a product";
       setState(() {
         id = arguments['id'];
+      });
+
+      FirebaseFirestore.instance
+          .collection('products')
+          .doc(id)
+          .get()
+          .then((value) {
+        _productName.text = value['name'];
+        _price.text = value['price'].toString();
       });
     }
 
