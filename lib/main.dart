@@ -52,6 +52,40 @@ class _HomePageState extends State<HomePage> {
   final Query _products =
       FirebaseFirestore.instance.collection('products').orderBy('name');
 
+  _closeModal() {
+    Navigator.pop(context);
+  }
+
+  Future<void> _confirmDeleteUser(BuildContext contex, String id) {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Delete Product"),
+          content: const Text("Are you sure you want to delete this product?"),
+          actions: <Widget>[
+            TextButton(
+              child: const Text("Delete"),
+              onPressed: () async {
+                FirebaseFirestore.instance
+                    .collection('products')
+                    .doc(id)
+                    .delete()
+                    .then((value) => _closeModal());
+              },
+            ),
+            TextButton(
+              child: const Text("Cancel"),
+              onPressed: () {
+                _closeModal();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,7 +123,8 @@ class _HomePageState extends State<HomePage> {
                       ),
                       IconButton(
                         icon: const Icon(Icons.delete),
-                        onPressed: () => {debugPrint('DELETING . . .')},
+                        onPressed: () =>
+                            _confirmDeleteUser(context, documentSnapshot.id),
                       )
                     ],
                   ),

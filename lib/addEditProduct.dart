@@ -43,10 +43,8 @@ class _AddEditProductState extends State<AddEditProduct> {
       };
 
       if (id.isEmpty) {
-        print("Adding . . .");
         await _products.add(data).then((value) => _goBack());
       } else {
-        print("Updating . . .");
         await _products.doc(id).update(data).then((value) => _goBack());
       }
     }
